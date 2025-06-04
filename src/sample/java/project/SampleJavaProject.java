@@ -1,77 +1,53 @@
-package sample.java.project;
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.ParameterException;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
+  <modelVersion>4.0.0</modelVersion>
 
-/**
- * The main class of the application. It contains the main() method,
- * the first method called.
- */
-@NoArgsConstructor
-@AllArgsConstructor
-public class SampleJavaProject implements Runnable {
+  <groupId>sample.java.project</groupId>
+  <artifactId>sample-java-project</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
 
-    /** The delay between printed messages. */
-    private static final long PRINT_DELAY = 1000L;
+  <dependencies>
+    <!-- JCommander dependency -->
+    <dependency>
+      <groupId>com.beust</groupId>
+      <artifactId>jcommander</artifactId>
+      <version>1.82</version>
+    </dependency>
 
-    /** The name to be printed in the output message. */
-    @Getter @Setter @NonNull
-    @Parameter(names = "--name", description = "set the user's name",
-               required = true)
-    private String name = "world";
+    <!-- Lombok dependency -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.28</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
 
-    /** Command line parameter for --loop. */
-    @Parameter(names = "--loop", description = "print endlessly, hotswap demo")
-    private boolean loop = false;
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.3.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals><goal>shade</goal></goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>sample.java.project.SampleJavaProject</mainClass>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
-    /** Command line parameter for --help. */
-    @Parameter(names = { "-h", "--help" }, description = "print help message")
-    private boolean help = false;
-
-    /**
-     * Print the "Hello, world!" string.
-     * @param args application input arguments
-     */
-    public static void main(final String[] args) {
-        /* Parse command line arguments. */
-        SampleJavaProject sjp = new SampleJavaProject();
-        try {
-            JCommander jc = new JCommander(sjp, args);
-            if (sjp.help) {
-                jc.usage();
-                return;
-            }
-        } catch (ParameterException e) {
-            System.err.println("error: " + e.getMessage());
-            new JCommander(new SampleJavaProject()).usage();
-            System.exit(-1);
-        }
-
-        sjp.run();
-    }
-
-    /**
-     * Print the "Hello, world!" string.
-     */
-    public final void sayHello() {
-        System.out.printf("Hello, %s!%n", name);
-    }
-
-    @Override
-    public final void run() {
-        do {
-            sayHello();
-            try {
-                Thread.sleep(PRINT_DELAY);
-            } catch (InterruptedException e) {
-                return;
-            }
-        } while (loop);
-    }
-}
+</project>
