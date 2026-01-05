@@ -19,7 +19,7 @@ FROM eclipse-temurin:17-jdk
 WORKDIR /app
 
 # Copy the shaded jar from the build stage
-COPY --from=build /app/target/sample-java-project-1.0.0.jar app.jarr
+COPY --from=build /app/target/sample-java-project-1.0.0.jar app.jar
 
 
 # Run the shaded jar
